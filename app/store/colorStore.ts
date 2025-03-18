@@ -19,7 +19,7 @@ interface ColorState {
   setColorName: (index: number, name: string) => void;
 }
 
-export const useColorStore = create<ColorState>((set: any) => ({
+export const useColorStore = create<ColorState>((set) => ({
   colors: [],
   colorNames: {},
   currentColor: "",
@@ -64,7 +64,7 @@ export const useColorStore = create<ColorState>((set: any) => ({
         return;
       }
 
-      set((state: any) => {
+      set((state: ColorState) => {
         if (state.colors.includes(normalizedColor)) {
           toast.info("Color already exists", {
             description: "This color is already in your list",
@@ -73,14 +73,14 @@ export const useColorStore = create<ColorState>((set: any) => ({
         }
         return { colors: [...state.colors, normalizedColor], currentColor: "" };
       });
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error", { description: "Invalid color format" });
     }
   },
 
   removeColor: (index: number) =>
-    set((state: any) => ({
-      colors: state.colors.filter((_: any, i: number) => i !== index),
+    set((state: ColorState) => ({
+      colors: state.colors.filter((_, i: number) => i !== index),
     })),
 
   removeAllColors: () => set({ colors: [], uploadedImage: null }),
@@ -92,7 +92,7 @@ export const useColorStore = create<ColorState>((set: any) => ({
   setShowExport: (show: boolean) => set({ showExport: show }),
 
   setColorName: (index: number, name: string) =>
-    set((state: any) => ({
+    set((state: ColorState) => ({
       colorNames: { ...state.colorNames, [index]: name },
     })),
 }));

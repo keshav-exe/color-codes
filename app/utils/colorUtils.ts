@@ -147,6 +147,7 @@ export const handleFileUpload = (
       img.crossOrigin = "Anonymous";
       img.src = event.target?.result as string;
     } catch (error) {
+      console.error("error processing image:", error);
       toast.dismiss();
       toast.error("error processing image");
       setIsExtracting(false);

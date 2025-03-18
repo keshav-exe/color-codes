@@ -13,15 +13,7 @@ import {
 } from "./utils/colorUtils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  ArrowLeft,
-  Copy,
-  Download,
-  Github,
-  GithubIcon,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Copy, Download, GithubIcon, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -35,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Image from "next/image";
 
 extend([lchPlugin]);
 
@@ -57,7 +50,6 @@ export default function Home() {
   } = useColorStore();
 
   const [showReplaceDialog, setShowReplaceDialog] = useState(false);
-  const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -113,7 +105,6 @@ export default function Home() {
   const handleReplace = () => {
     fileInputRef.current?.click();
     setShowReplaceDialog(false);
-    setPendingFile(null);
     removeAllColors();
   };
 
@@ -193,7 +184,9 @@ export default function Home() {
                       const dataTransfer = new DataTransfer();
                       dataTransfer.items.add(file);
                       input.files = dataTransfer.files;
-                      handleInputFileChange({ target: input } as any);
+                      handleInputFileChange({
+                        target: input,
+                      } as React.ChangeEvent<HTMLInputElement>);
                     }
                   } else {
                     toast.error("please drop an image file");
@@ -227,7 +220,9 @@ export default function Home() {
                     </p>
                   )}
                   {uploadedImage && (
-                    <img
+                    <Image
+                      fill
+                      unoptimized
                       src={uploadedImage}
                       alt="uploaded for color extraction"
                       className="w-full h-auto"
