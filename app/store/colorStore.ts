@@ -40,7 +40,7 @@ export const useColorStore = create<ColorState>((set: any) => ({
       // Handle raw HSL values
       else if (
         /^\d+(?:\.\d+)?(?:deg|turn|rad|grad)?\s+\d+(?:\.\d+)?%?\s+\d+(?:\.\d+)?%?$/.test(
-          normalizedColor
+          normalizedColor,
         )
       ) {
         normalizedColor = `hsl(${normalizedColor})`;

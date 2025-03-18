@@ -16,7 +16,7 @@ declare module "colorthief" {
     getPalette(
       img: HTMLImageElement,
       colorCount?: number,
-      quality?: number
+      quality?: number,
     ): RGB[];
   }
 }

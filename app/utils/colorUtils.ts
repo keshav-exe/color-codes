@@ -15,7 +15,7 @@ export const getColorFormats = (color: string) => {
 
 export const generateCssVariables = (
   colors: string[],
-  format: "hex" | "rgb" | "hsl" | "oklch"
+  format: "hex" | "rgb" | "hsl" | "oklch",
 ) => {
   if (colors.length === 0) return "";
 
@@ -83,7 +83,7 @@ export const handleFileUpload = (
     setUploadedImage: (value: string) => void;
     colors: string[];
     addColor: (color: string) => void;
-  }
+  },
 ) => {
   setIsExtracting(true);
   toast.loading("Extracting colors...");
@@ -111,7 +111,7 @@ export const handleFileUpload = (
                 const distance = Math.sqrt(
                   Math.pow(c1.toRgb().r - c2.toRgb().r, 2) +
                     Math.pow(c1.toRgb().g - c2.toRgb().g, 2) +
-                    Math.pow(c1.toRgb().b - c2.toRgb().b, 2)
+                    Math.pow(c1.toRgb().b - c2.toRgb().b, 2),
                 );
                 return distance < 30;
               });
