@@ -3,7 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-
+import { Navbar } from "@/components/navbar";
 const font = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -126,6 +126,7 @@ export default function RootLayout({
                 "linear-gradient(0deg, #000 0, rgba(0, 0, 0, .9) 20%, rgba(0, 0, 0, .8) 40%, rgba(0, 0, 0, .6) 60%, rgba(0, 0, 0, .4) 80%, transparent)",
             }}
           />
+          <Navbar />
           {children}
           <Toaster richColors position="bottom-center" />
         </ThemeProvider>
