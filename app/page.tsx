@@ -15,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Copy, Download, GithubIcon, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ModeToggle } from "@/components/mode-toggle";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import Link from "next/link";
@@ -28,9 +27,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import Image from "next/image";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FaGithub, FaXTwitter } from "react-icons/fa6";
-import { Separator } from "@/components/ui/separator";
 extend([lchPlugin]);
 
 export default function Home() {
@@ -38,7 +42,6 @@ export default function Home() {
   const {
     colors,
     currentColor,
-    uploadedImage,
     isExtracting,
     showExport,
     setCurrentColor,
@@ -53,17 +56,18 @@ export default function Home() {
 
   const [showReplaceDialog, setShowReplaceDialog] = useState(false);
 
+  // NEW: single global format selector (hex | rgb | hsl | hsv | oklch)
+  const [selectedFormat, setSelectedFormat] = useState<
+    "hex" | "rgb" | "hsl" | "hsv" | "oklch"
+  >("hex");
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      addColor(currentColor);
-    }
+    if (e.key === "Enter") addColor(currentColor);
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success("Copied!", {
-      description: "Color code copied to clipboard",
-    });
+    toast.success("Copied!", { description: "Copied to clipboard" });
   };
 
   const handleInputFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,15 +81,11 @@ export default function Home() {
       addColor,
     });
 
-    // Reset input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const exportColors = (type: string) => {
     let content = "";
-
     switch (type) {
       case "css-hex":
         content = generateCssVariables(colors, "hex");
@@ -100,7 +100,6 @@ export default function Home() {
         content = generateTailwindConfig(colors);
         break;
     }
-
     copyToClipboard(content);
   };
 
@@ -120,7 +119,7 @@ export default function Home() {
                 <h1 className="text-2xl font-semibold">Color Codes</h1>
                 <p className="text-sm text-muted-foreground">
                   Convert color codes or extract color codes from images and
-                  convert to various formats.
+                  export to various formats.
                 </p>
                 <div className="flex gap-2">
                   <Link href="https://x.com/kshvbgde" target="_blank">
@@ -140,7 +139,7 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col border-t lg:border-t-0 lg:border-l border-dashed">
-                <div className="flex flex-col gap-2 p-4 lg:p-8 ">
+                <div className="flex flex-col gap-2 p-4 lg:p-8">
                   <Label htmlFor="color-input">color code</Label>
                   <div className="flex gap-2">
                     <Input
@@ -149,13 +148,11 @@ export default function Home() {
                       value={currentColor}
                       onChange={(e) => setCurrentColor(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      className=""
                       autoFocus
                     />
                     <Button
                       onClick={() => addColor(currentColor)}
                       disabled={!currentColor}
-                      className="w-fit"
                     >
                       Add
                     </Button>
@@ -182,10 +179,10 @@ export default function Home() {
 
         {colors.length > 0 && (
           <div className="flex flex-col mx-auto w-full border-b border-dashed h-full">
-            <div className="flex flex-col gap-4 w-full border-x border-dashed max-w-4xl mx-auto h-full">
-              <div className="relative pb-32 h-full">
+            <div className="flex flex-col gap-4 w-full border-x border-dashed max-w-5xl mx-auto h-full">
+              <div className="relative pb-24 h-full">
                 {showExport ? (
-                  <div className="flex flex-col gap-4 p-4 lg:p-8 ">
+                  <div className="flex flex-col gap-4 p-4 lg:p-8">
                     <div className="flex justify-between items-center sticky top-0 bg-background">
                       <Button
                         onClick={() => setShowExport(!showExport)}
@@ -196,7 +193,7 @@ export default function Home() {
                     </div>
 
                     <Tabs defaultValue="tailwind">
-                      <TabsList className=" items-center">
+                      <TabsList className="items-center">
                         <TabsTrigger value="tailwind">tailwind</TabsTrigger>
                         <TabsTrigger value="css-hex">hex</TabsTrigger>
                         <TabsTrigger value="css-rgb">rgb</TabsTrigger>
@@ -292,10 +289,33 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="flex flex-col gap-4">
-                    <div className="flex justify-between items-center sticky top-16 p-4 lg:px-8 bg-background border-b border-dashed">
-                      <h2 className="text-xl font-semibold">
-                        {colors.length} color{colors.length > 1 ? "s" : ""}
-                      </h2>
+                    {/* Toolbar with global selector and actions */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 sticky top-16 p-4 lg:px-8 bg-background border-b border-dashed">
+                      <div className="flex items-center gap-3">
+                        <h2 className="text-xl font-semibold">
+                          {colors.length} color{colors.length > 1 ? "s" : ""}
+                        </h2>
+
+                        {/* Global format selector (like shadcn/colors) */}
+                        <Select
+                          value={selectedFormat}
+                          onValueChange={(v) =>
+                            setSelectedFormat(v as typeof selectedFormat)
+                          }
+                        >
+                          <SelectTrigger className="h-8 w-[110px]">
+                            <SelectValue placeholder="Format" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="hex">HEX</SelectItem>
+                            <SelectItem value="rgb">RGB</SelectItem>
+                            <SelectItem value="hsl">HSL</SelectItem>
+                            <SelectItem value="hsv">HSV</SelectItem>
+                            <SelectItem value="oklch">OKLCH</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
                       <div className="flex gap-2">
                         <Button
                           variant="outline"
@@ -318,64 +338,95 @@ export default function Home() {
                         </Button>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 lg:p-8">
-                      {colors.map((color: string, index: number) => {
-                        const formats = getColorFormats(color);
-                        return (
-                          <div
-                            key={index}
-                            className="overflow-hidden bg-card border rounded-md"
-                          >
+
+                    {/* Single-row scrollable palette, like your screenshot */}
+                    <div className="w-full overflow-x-auto">
+                      <div
+                        className="
+                          flex gap-3 px-4 lg:px-8 pb-6
+                          min-w-max
+                        "
+                      >
+                        {colors.map((color: string, index: number) => {
+                          const formats = getColorFormats(color);
+                          const text =
+                            formats[selectedFormat as keyof typeof formats];
+
+                          return (
                             <div
-                              className="h-20 w-full"
-                              style={{ backgroundColor: color }}
-                            />
-                            <div className="flex items-center justify-between p-3 gap-2">
-                              <Input
-                                value={`color ${index + 1}`}
-                                onChange={(e) =>
-                                  setColorName(index, e.target.value)
-                                }
-                              />
-                              <Button
-                                variant="outline"
-                                onClick={() => removeColor(index)}
-                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                              key={index}
+                              className="
+                                group relative shrink-0
+                                w-[130px] sm:w-[150px] md:w-[160px]
+                              "
+                            >
+                              {/* Swatch card */}
+                              <div
+                                className="
+                                  aspect-[3/4] w-full overflow-hidden
+                                  rounded-xl border border-border/60
+                                  bg-card shadow-sm
+                                "
                               >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            <div>
-                              <div className="flex flex-col divide-y divide-dashed">
-                                {Object.entries(formats).map(
-                                  ([format, value]) => (
-                                    <div
-                                      key={format}
-                                      className="flex flex-col gap-2 p-3"
-                                    >
-                                      <span className="text-xs text-muted-foreground font-medium uppercase">
-                                        {format}:
-                                      </span>
-                                      <div className="flex gap-2 items-center justify-between bg-muted rounded-md">
-                                        <span className="font-mono text-sm p-2">
-                                          {value}
-                                        </span>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          onClick={() => copyToClipboard(value)}
-                                        >
-                                          <Copy className="h-3.5 w-3.5" />
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  ),
-                                )}
+                                {/* Color preview fills most of the card, rounded like the image */}
+                                <div
+                                  className="
+                                    h-full w-full
+                                    rounded-xl
+                                    cursor-pointer
+                                    transition-transform
+                                    group-hover:scale-[1.015]
+                                  "
+                                  style={{ backgroundColor: color }}
+                                  onClick={() => copyToClipboard(text)}
+                                  title="Click to copy"
+                                />
+                              </div>
+
+                              {/* Caption under swatch: name + value in selected format */}
+                              <div className="mt-2 px-1">
+                                <div className="flex items-center justify-between gap-2">
+                                  <Input
+                                    value={`color ${index + 1}`}
+                                    onChange={(e) =>
+                                      setColorName(index, e.target.value)
+                                    }
+                                    className="
+                                      h-7 text-xs border-none bg-transparent p-0
+                                      focus-visible:ring-0
+                                    "
+                                  />
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => removeColor(index)}
+                                    className="
+                                      h-6 w-6 text-muted-foreground
+                                      hover:text-destructive opacity-0
+                                      group-hover:opacity-100 transition-opacity
+                                    "
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </div>
+
+                                <button
+                                  className="
+                                    mt-1 w-full text-left font-mono text-[11px]
+                                    text-muted-foreground bg-muted/30
+                                    rounded px-2 py-1
+                                    hover:bg-muted/50 transition-colors
+                                  "
+                                  onClick={() => copyToClipboard(text)}
+                                  title="Click to copy"
+                                >
+                                  {text}
+                                </button>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 )}
