@@ -242,7 +242,7 @@ export default function Home() {
               <div className="relative flex flex-col h-full">
                 {showExport ? (
                   <div className="flex flex-col h-full">
-                    <div className="flex justify-between items-center sticky top-0 p-4 lg:px-6 bg-background border-b border-dashed z-20">
+                    <div className="flex justify-between items-center sticky top-0 p-4 lg:px-6 bg-background border-y border-dashed z-20">
                       <div className="flex items-center gap-3">
                         <Button
                           onClick={() => setShowExport(!showExport)}
@@ -408,7 +408,7 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="flex flex-col">
-                    <div className="flex justify-between items-center sticky top-0 p-4 lg:px-6 bg-background/85 backdrop-blur-lg border-b border-dashed z-20">
+                    <div className="flex justify-between items-center sticky top-0 p-4 lg:px-6 bg-background/85 backdrop-blur-lg border-y border-dashed z-20">
                       <h2>
                         {colors.length} color{colors.length > 1 ? "s" : ""}
                       </h2>
@@ -482,7 +482,7 @@ export default function Home() {
                                         {format}:
                                       </span>
                                       <div className="flex gap-2 items-center justify-between w-full">
-                                        <span className="font-mono text-sm">
+                                        <span className="font-mono text-sm line-clamp-1">
                                           {value}
                                         </span>
                                         <Button
@@ -540,7 +540,7 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col mx-auto w-full border-dashed h-full ">
+          <div className="flex flex-col mx-auto w-full border-t border-dashed h-full ">
             <div className="flex flex-col gap-4 w-full border-x border-dashed max-w-4xl mx-auto h-full min-h-dvh">
               <div className="relative flex flex-col h-full">
                 <div className="flex flex-col h-full p-6 gap-2">
