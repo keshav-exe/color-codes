@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { colord } from "colord";
+import { isValidColor } from "colorizr";
 import { toast } from "sonner";
 
 interface ColorState {
@@ -15,7 +15,7 @@ interface ColorState {
   removeAllColors: () => void;
   setUploadedImage: (image: string | null) => void;
   setIsExtracting: (isExtracting: boolean) => void;
-  setShowExport: (show: boolean) => void;
+  setShowExport: (showExport: boolean) => void;
   setColorName: (index: number, name: string) => void;
 }
 
@@ -56,8 +56,7 @@ export const useColorStore = create<ColorState>((set) => ({
         normalizedColor = `#${normalizedColor}`;
       }
 
-      const color = colord(normalizedColor);
-      if (!color.isValid()) {
+      if (!isValidColor(normalizedColor)) {
         toast.error("Invalid color", {
           description: "Please enter a valid color code",
         });
@@ -74,7 +73,9 @@ export const useColorStore = create<ColorState>((set) => ({
         return { colors: [...state.colors, normalizedColor], currentColor: "" };
       });
     } catch (_error) {
-      toast.error("Error", { description: "Invalid color format" });
+      toast.error("Invalid color", {
+        description: "Please enter a valid color code",
+      });
     }
   },
 
@@ -89,10 +90,10 @@ export const useColorStore = create<ColorState>((set) => ({
 
   setIsExtracting: (isExtracting: boolean) => set({ isExtracting }),
 
-  setShowExport: (show: boolean) => set({ showExport: show }),
+  setShowExport: (showExport: boolean) => set({ showExport }),
 
   setColorName: (index: number, name: string) =>
-    set((state: ColorState) => ({
+    set((state) => ({
       colorNames: { ...state.colorNames, [index]: name },
     })),
 }));

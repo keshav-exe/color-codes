@@ -106,6 +106,9 @@ importers:
       colord:
         specifier: ^2.9.3
         version: 2.9.3
+      colorizr:
+        specifier: ^3.0.8
+        version: 3.0.8
       colorthief:
         specifier: ^2.6.0
         version: 2.6.0
@@ -2439,6 +2442,12 @@ packages:
     resolution:
       {
         integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==,
+      }
+
+  colorizr@3.0.8:
+    resolution:
+      {
+        integrity: sha512-5B5bNiGU/iEbdL3JsiIYRf57T0CuJjHSgVfe3SP3W3ePe2waJuEYl+llzwm1ZhxIcVyA+gThRlBu3yXBV3tAQQ==,
       }
 
   colorthief@2.6.0:
@@ -6650,6 +6659,8 @@ snapshots:
   colord@2.9.3: {}
 
   colorette@2.0.20: {}
+
+  colorizr@3.0.8: {}
 
   colorthief@2.6.0:
     dependencies:

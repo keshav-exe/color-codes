@@ -43,6 +43,7 @@
     "cmdk": "1.0.0",
     "color-name-list": "^11.5.0",
     "colord": "^2.9.3",
+    "colorizr": "^3.0.8",
     "colorthief": "^2.6.0",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.5.2",

@@ -10,6 +10,9 @@ const font = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  icons: {
+    icon: "🎨",
+  },
   title: "Color Codes",
   description: "Convert color codes of any format to css color codes.",
   openGraph: {
@@ -117,18 +120,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div
-            className="fixed bottom-0 left-0 w-full h-[50px] z-10 blur-gradient-bottom backdrop-blur-sm"
-            style={{
-              background:
-                "linear-gradient(0deg, hsl(var(--background) / 0.8) 0, hsl(var(--background) / 0.7) 20%, hsl(var(--background) / 0.5) 40%, hsl(var(--background) / 0.3) 60%, hsl(var(--background) / 0.1) 80%, hsl(var(--background) / 0))",
-              maskImage:
-                "linear-gradient(0deg, #000 0, rgba(0, 0, 0, .9) 20%, rgba(0, 0, 0, .8) 40%, rgba(0, 0, 0, .6) 60%, rgba(0, 0, 0, .4) 80%, transparent)",
-            }}
-          />
-          <Navbar />
           {children}
-          <Toaster richColors position="bottom-center" />
+          <Toaster position="top-left" />
         </ThemeProvider>
       </body>
     </html>
