@@ -29,6 +29,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -540,6 +541,7 @@ export default function Home() {
                 autoFocus
               />
               <div className="flex items-center gap-2">
+                <ModeToggle />
                 <div>
                   <Input
                     type="file"
