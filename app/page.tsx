@@ -30,6 +30,13 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { ModeToggle } from "@/components/mode-toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -76,6 +83,14 @@ export default function Home() {
   const [schemeType, setSchemeType] = useState<
     "analogous" | "complementary" | "triadic"
   >("complementary");
+
+  // Add state for format selection
+  const [cssFormat, setCssFormat] = useState<"hex" | "rgb" | "hsl" | "oklch">(
+    "hex",
+  );
+  const [tailwindFormat, setTailwindFormat] = useState<
+    "hex" | "rgb" | "hsl" | "oklch"
+  >("hex");
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -133,8 +148,17 @@ export default function Home() {
           useModernSyntax: true,
         });
         break;
-      case "tailwind":
-        content = generateTailwindConfig(colors);
+      case "tailwind-hex":
+        content = generateTailwindConfig(colors, "hex");
+        break;
+      case "tailwind-rgb":
+        content = generateTailwindConfig(colors, "rgb");
+        break;
+      case "tailwind-hsl":
+        content = generateTailwindConfig(colors, "hsl");
+        break;
+      case "tailwind-oklch":
+        content = generateTailwindConfig(colors, "oklch");
         break;
     }
 
@@ -210,15 +234,15 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen flex flex-col h-full w-full justify-end">
+    <main className="min-h-dvh flex flex-col h-full w-full justify-end">
       <div className="flex flex-col mx-auto w-full h-full">
-        {colors.length > 0 && (
+        {colors.length > 0 ? (
           <div className="flex flex-col mx-auto w-full border-dashed h-full ">
-            <div className="flex flex-col gap-4 w-full border-x border-dashed max-w-4xl mx-auto h-full min-h-screen">
+            <div className="flex flex-col gap-4 w-full border-x border-dashed max-w-4xl mx-auto h-full min-h-dvh">
               <div className="relative flex flex-col h-full">
                 {showExport ? (
                   <div className="flex flex-col h-full">
-                    <div className="flex justify-between items-center sticky top-0 p-4 lg:px-8 bg-background border-b border-dashed z-20">
+                    <div className="flex justify-between items-center sticky top-0 p-4 lg:px-6 bg-background border-b border-dashed z-20">
                       <div className="flex items-center gap-3">
                         <Button
                           onClick={() => setShowExport(!showExport)}
@@ -227,75 +251,82 @@ export default function Home() {
                         >
                           <ArrowLeft className="h-4 w-4" />
                         </Button>
-                        <h2>Export CSS</h2>
+                        <h2>export css</h2>
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-6 p-4 lg:p-6">
-                      <Tabs defaultValue="tailwind" className="w-full">
-                        <TabsList className="grid w-full grid-cols-5">
+                    <div className="flex flex-col">
+                      <Tabs defaultValue="css" className="w-full gap-0">
+                        <TabsList className="grid w-full grid-cols-2">
+                          <TabsTrigger value="css" className="text-xs">
+                            CSS Variables
+                          </TabsTrigger>
                           <TabsTrigger value="tailwind" className="text-xs">
-                            tailwind
-                          </TabsTrigger>
-                          <TabsTrigger value="css-hex" className="text-xs">
-                            hex
-                          </TabsTrigger>
-                          <TabsTrigger value="css-rgb" className="text-xs">
-                            rgb
-                          </TabsTrigger>
-                          <TabsTrigger value="css-hsl" className="text-xs">
-                            hsl
-                          </TabsTrigger>
-                          <TabsTrigger value="css-oklch" className="text-xs">
-                            oklch
+                            Tailwind Config
                           </TabsTrigger>
                         </TabsList>
 
-                        <TabsContent value="tailwind" className="mt-4">
-                          <div className="border border-dashed overflow-hidden">
+                        <TabsContent value="css">
+                          <div className="border-t border-dashed overflow-hidden">
                             <div className="flex items-center justify-between p-3 border-b border-dashed bg-card">
                               <span className="text-sm font-medium">
-                                Tailwind CSS Config
+                                CSS Variables
                               </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => exportColors("tailwind")}
-                                className="flex items-center gap-2"
-                              >
-                                <Copy className="h-3.5 w-3.5" />
-                                Copy
-                              </Button>
-                            </div>
-                            <div className="bg-muted/30 p-4 rounded-sm">
-                              <pre className="text-sm font-mono text-foreground whitespace-pre-wrap overflow-x-auto">
-                                <code>{generateTailwindConfig(colors)}</code>
-                              </pre>
-                            </div>
-                          </div>
-                        </TabsContent>
-
-                        <TabsContent value="css-hex" className="mt-4">
-                          <div className="border border-dashed overflow-hidden">
-                            <div className="flex items-center justify-between p-3 border-b border-dashed bg-card">
-                              <span className="text-sm font-medium">
-                                CSS Variables (HEX)
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => exportColors("css-hex")}
-                                className="flex items-center gap-2"
-                              >
-                                <Copy className="h-3.5 w-3.5" />
-                                Copy
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="flex items-center gap-1 text-xs border border-dashed"
+                                    >
+                                      {cssFormat.toUpperCase()}
+                                      <ChevronDown className="h-3 w-3" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent
+                                    align="start"
+                                    className="w-[var(--radix-dropdown-menu-trigger-width)]"
+                                  >
+                                    <DropdownMenuItem
+                                      onClick={() => setCssFormat("hex")}
+                                    >
+                                      HEX
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => setCssFormat("rgb")}
+                                    >
+                                      RGB
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => setCssFormat("hsl")}
+                                    >
+                                      HSL
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => setCssFormat("oklch")}
+                                    >
+                                      OKLCH
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() =>
+                                    exportColors(`css-${cssFormat}`)
+                                  }
+                                  className="flex items-center gap-2"
+                                >
+                                  <Copy className="h-3.5 w-3.5" />
+                                </Button>
+                              </div>
                             </div>
                             <div className="bg-muted/30 p-4 rounded-sm">
                               <pre className="text-sm font-mono text-foreground whitespace-pre-wrap overflow-x-auto">
                                 <code>
                                   {generateAdvancedCssVariables(colors, {
-                                    format: "hex",
+                                    format: cssFormat,
                                     useModernSyntax: true,
                                   })}
                                 </code>
@@ -304,87 +335,69 @@ export default function Home() {
                           </div>
                         </TabsContent>
 
-                        <TabsContent value="css-rgb" className="mt-4">
+                        <TabsContent value="tailwind">
                           <div className="border border-dashed overflow-hidden">
                             <div className="flex items-center justify-between p-3 border-b border-dashed bg-card">
                               <span className="text-sm font-medium">
-                                CSS Variables (RGB)
+                                Tailwind Config
                               </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => exportColors("css-rgb")}
-                                className="flex items-center gap-2"
-                              >
-                                <Copy className="h-3.5 w-3.5" />
-                                Copy
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="flex items-center gap-1 text-xs border border-dashed"
+                                    >
+                                      {tailwindFormat.toUpperCase()}
+                                      <ChevronDown className="h-3 w-3" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent
+                                    align="start"
+                                    className="w-[var(--radix-dropdown-menu-trigger-width)]"
+                                  >
+                                    <DropdownMenuItem
+                                      onClick={() => setTailwindFormat("hex")}
+                                    >
+                                      HEX
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => setTailwindFormat("rgb")}
+                                    >
+                                      RGB
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => setTailwindFormat("hsl")}
+                                    >
+                                      HSL
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => setTailwindFormat("oklch")}
+                                    >
+                                      OKLCH
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() =>
+                                    exportColors(`tailwind-${tailwindFormat}`)
+                                  }
+                                  className="flex items-center gap-2"
+                                >
+                                  <Copy className="h-3.5 w-3.5" />
+                                </Button>
+                              </div>
                             </div>
                             <div className="bg-muted/30 p-4 rounded-sm">
                               <pre className="text-sm font-mono text-foreground whitespace-pre-wrap overflow-x-auto">
                                 <code>
-                                  {generateAdvancedCssVariables(colors, {
-                                    format: "rgb",
-                                    useModernSyntax: true,
-                                  })}
-                                </code>
-                              </pre>
-                            </div>
-                          </div>
-                        </TabsContent>
-
-                        <TabsContent value="css-hsl" className="mt-4">
-                          <div className="border border-dashed overflow-hidden">
-                            <div className="flex items-center justify-between p-3 border-b border-dashed bg-card">
-                              <span className="text-sm font-medium">
-                                CSS Variables (HSL)
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => exportColors("css-hsl")}
-                                className="flex items-center gap-2"
-                              >
-                                <Copy className="h-3.5 w-3.5" />
-                                Copy
-                              </Button>
-                            </div>
-                            <div className="bg-muted/30 p-4 rounded-sm">
-                              <pre className="text-sm font-mono text-foreground whitespace-pre-wrap overflow-x-auto">
-                                <code>
-                                  {generateAdvancedCssVariables(colors, {
-                                    format: "hsl",
-                                    useModernSyntax: true,
-                                  })}
-                                </code>
-                              </pre>
-                            </div>
-                          </div>
-                        </TabsContent>
-
-                        <TabsContent value="css-oklch" className="mt-4">
-                          <div className="border border-dashed overflow-hidden">
-                            <div className="flex items-center justify-between p-3 border-b border-dashed bg-card">
-                              <span className="text-sm font-medium">
-                                CSS Variables (OKLCH)
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => exportColors("css-oklch")}
-                                className="flex items-center gap-2"
-                              >
-                                <Copy className="h-3.5 w-3.5" />
-                                Copy
-                              </Button>
-                            </div>
-                            <div className="bg-muted/30 p-4 rounded-sm">
-                              <pre className="text-sm font-mono text-foreground whitespace-pre-wrap overflow-x-auto">
-                                <code>
-                                  {generateAdvancedCssVariables(colors, {
-                                    format: "oklch",
-                                    useModernSyntax: true,
-                                  })}
+                                  {generateTailwindConfig(
+                                    colors,
+                                    tailwindFormat,
+                                  )}
                                 </code>
                               </pre>
                             </div>
@@ -395,7 +408,7 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="flex flex-col">
-                    <div className="flex justify-between items-center sticky top-0 p-4 lg:px-8 bg-background border-b border-dashed z-20">
+                    <div className="flex justify-between items-center sticky top-0 p-4 lg:px-6 bg-background/85 backdrop-blur-lg border-b border-dashed z-20">
                       <h2>
                         {colors.length} color{colors.length > 1 ? "s" : ""}
                       </h2>
@@ -526,6 +539,21 @@ export default function Home() {
               </div>
             </div>
           </div>
+        ) : (
+          <div className="flex flex-col mx-auto w-full border-dashed h-full ">
+            <div className="flex flex-col gap-4 w-full border-x border-dashed max-w-4xl mx-auto h-full min-h-dvh">
+              <div className="relative flex flex-col h-full">
+                <div className="flex flex-col h-full p-6 gap-2">
+                  <h1 className="text-2xl font-medium">colors</h1>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    convert colors between formats, generate harmonious
+                    palettes, swatches, and export css variables or tailwind
+                    configs.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
         <div className="flex flex-col mx-auto w-full border-t border-dashed sticky bottom-0 bg-background/85 backdrop-blur-lg mt-auto">
           <div className="flex flex-col gap-4 w-full border-x border-dashed max-w-4xl mx-auto">
@@ -622,19 +650,67 @@ export default function Home() {
                 <Label className="text-xs text-muted-foreground">
                   Palette Type
                 </Label>
-                <select
-                  value={paletteType}
-                  onChange={(e) => {
-                    setPaletteType(e.target.value as any);
-                    handleColorGenerate(generatorModal.baseColor, "palette");
-                  }}
-                  className="w-full p-2 border border-dashed rounded text-sm bg-background"
-                >
-                  <option value="analogous">Analogous</option>
-                  <option value="monochromatic">Monochromatic</option>
-                  <option value="complementary">Complementary</option>
-                  <option value="triadic">Triadic</option>
-                </select>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between text-sm border-dashed"
+                    >
+                      {paletteType.charAt(0).toUpperCase() +
+                        paletteType.slice(1)}
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="w-[var(--radix-dropdown-menu-trigger-width)]"
+                  >
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setPaletteType("analogous");
+                        handleColorGenerate(
+                          generatorModal.baseColor,
+                          "palette",
+                        );
+                      }}
+                    >
+                      Analogous
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setPaletteType("monochromatic");
+                        handleColorGenerate(
+                          generatorModal.baseColor,
+                          "palette",
+                        );
+                      }}
+                    >
+                      Monochromatic
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setPaletteType("complementary");
+                        handleColorGenerate(
+                          generatorModal.baseColor,
+                          "palette",
+                        );
+                      }}
+                    >
+                      Complementary
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setPaletteType("triadic");
+                        handleColorGenerate(
+                          generatorModal.baseColor,
+                          "palette",
+                        );
+                      }}
+                    >
+                      Triadic
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             )}
 
@@ -643,18 +719,46 @@ export default function Home() {
                 <Label className="text-xs text-muted-foreground">
                   Scheme Type
                 </Label>
-                <select
-                  value={schemeType}
-                  onChange={(e) => {
-                    setSchemeType(e.target.value as any);
-                    handleColorGenerate(generatorModal.baseColor, "scheme");
-                  }}
-                  className="w-full p-2 border border-dashed rounded text-sm bg-background"
-                >
-                  <option value="complementary">Complementary</option>
-                  <option value="analogous">Analogous</option>
-                  <option value="triadic">Triadic</option>
-                </select>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between text-sm border-dashed"
+                    >
+                      {schemeType.charAt(0).toUpperCase() + schemeType.slice(1)}
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="w-[var(--radix-dropdown-menu-trigger-width)]"
+                  >
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSchemeType("complementary");
+                        handleColorGenerate(generatorModal.baseColor, "scheme");
+                      }}
+                    >
+                      Complementary
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSchemeType("analogous");
+                        handleColorGenerate(generatorModal.baseColor, "scheme");
+                      }}
+                    >
+                      Analogous
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSchemeType("triadic");
+                        handleColorGenerate(generatorModal.baseColor, "scheme");
+                      }}
+                    >
+                      Triadic
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             )}
           </div>
@@ -668,7 +772,9 @@ export default function Home() {
                 />
                 <div className="p-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs">{genColor}</span>
+                    <span className="font-mono text-xs line-clamp-1">
+                      {genColor}
+                    </span>
                     <Button
                       variant="ghost"
                       size="icon"

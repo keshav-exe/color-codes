@@ -57,25 +57,19 @@ export const useColorStore = create<ColorState>((set) => ({
       }
 
       if (!isValidColor(normalizedColor)) {
-        toast.error("Invalid color", {
-          description: "Please enter a valid color code",
-        });
+        toast.error("Please enter a valid color code");
         return;
       }
 
       set((state: ColorState) => {
         if (state.colors.includes(normalizedColor)) {
-          toast.info("Color already exists", {
-            description: "This color is already in your list",
-          });
+          toast.info("This color is already in your list");
           return state;
         }
         return { colors: [...state.colors, normalizedColor], currentColor: "" };
       });
     } catch (_error) {
-      toast.error("Invalid color", {
-        description: "Please enter a valid color code",
-      });
+      toast.error("Please enter a valid color code");
     }
   },
 

@@ -3,7 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-import { Navbar } from "@/components/navbar";
+
 const font = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -13,16 +13,16 @@ export const metadata: Metadata = {
   icons: {
     icon: "🎨",
   },
-  title: "Color Codes",
+  title: "An Open-Source Color Converter",
   description: "Convert color codes of any format to css color codes.",
   openGraph: {
-    title: "Color Codes",
+    title: "An Open-Source Color Converter",
     description: "Convert color codes of any format to css color codes.",
     images: ["/opengraph-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Color Codes",
+    title: "An Open-Source Color Converter",
     description: "Convert color codes of any format to css color codes.",
     images: ["/opengraph-image.png"],
   },
@@ -30,9 +30,23 @@ export const metadata: Metadata = {
     "color",
     "codes",
     "css",
+    "colors",
     "color codes",
     "color code converter",
     "color code",
+
+    "palette generator",
+    "scheme generator",
+    "swatch generator",
+    "color palette generator",
+    "color scheme generator",
+    "color swatch generator",
+    "color palette",
+
+    "open source",
+    "open source color converter",
+    "open source color codes",
+    "open source color code converter",
 
     "hex converter",
     "rgb converter",
@@ -113,7 +127,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${font.className} min-h-screen`}>
+      <body className={`${font.className} min-h-dvh`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

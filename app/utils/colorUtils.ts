@@ -115,7 +115,10 @@ export const generateAdvancedCssVariables = (
   return css;
 };
 
-export const generateTailwindConfig = (colors: string[]) => {
+export const generateTailwindConfig = (
+  colors: string[],
+  format: "hex" | "rgb" | "hsl" | "oklch" = "hex",
+) => {
   if (colors.length === 0) return "";
 
   let config = "module.exports = {\n";
@@ -124,7 +127,8 @@ export const generateTailwindConfig = (colors: string[]) => {
   config += "      colors: {\n";
 
   colors.forEach((color, index) => {
-    config += `        color${index + 1}: "${convert(color, "hex")}",\n`;
+    const value = convert(color, format);
+    config += `        color${index + 1}: "${value}",\n`;
   });
 
   config += "      },\n";
