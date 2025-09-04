@@ -13,16 +13,16 @@ export const metadata: Metadata = {
   icons: {
     icon: "🎨",
   },
-  title: "An Open-Source Color Converter",
+  title: "Colors | Open-Source Color Converter",
   description: "Convert color codes of any format to css color codes.",
   openGraph: {
-    title: "An Open-Source Color Converter",
+    title: "Colors | Open-Source Color Converter",
     description: "Convert color codes of any format to css color codes.",
     images: ["/opengraph-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "An Open-Source Color Converter",
+    title: "Colors | Open-Source Color Converter",
     description: "Convert color codes of any format to css color codes.",
     images: ["/opengraph-image.png"],
   },
